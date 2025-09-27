@@ -7,6 +7,18 @@ group = "com.yrmz"
 version = "unspecified"
 
 repositories {
-    maven { url = uri("https://repo.spring.io/snapshot") }
     mavenCentral()
+    maven { url = uri("https://repo.spring.io/milestone") }
+    maven { url = uri("https://repo.spring.io/snapshot") }
+}
+
+dependencies {
+    api(libs.kotlin.reflect)
+    api(libs.jackson.module.kotlin)
+
+    testImplementation(kotlin("test"))
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
