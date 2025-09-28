@@ -2,10 +2,12 @@ package com.yrmz.chirp.api.controllers
 
 import com.yrmz.chirp.api.dto.AuthenticatedUserDto
 import com.yrmz.chirp.api.dto.LoginRequest
+import com.yrmz.chirp.api.dto.RefreshRequest
 import com.yrmz.chirp.api.dto.RegisterRequest
 import com.yrmz.chirp.api.dto.UserDto
 import com.yrmz.chirp.api.mappers.toAuthenticatedUserDto
 import com.yrmz.chirp.api.mappers.toUserDto
+import com.yrmz.chirp.domain.model.AuthenticatedUser
 import com.yrmz.chirp.service.auth.AuthService
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.PostMapping
@@ -38,5 +40,14 @@ class AuthController(
             email = body.email,
             password = body.password
         ).toAuthenticatedUserDto()
+    }
+
+    @PostMapping("/refresh")
+    fun refresh(
+        @RequestBody body: RefreshRequest
+    ): AuthenticatedUserDto {
+        return authService
+            .refresh(body.refreshToken)
+            .toAuthenticatedUserDto()
     }
 }
