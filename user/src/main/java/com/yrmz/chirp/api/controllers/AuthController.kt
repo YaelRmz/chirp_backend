@@ -1,7 +1,10 @@
 package com.yrmz.chirp.api.controllers
 
+import com.yrmz.chirp.api.dto.AuthenticatedUserDto
+import com.yrmz.chirp.api.dto.LoginRequest
 import com.yrmz.chirp.api.dto.RegisterRequest
 import com.yrmz.chirp.api.dto.UserDto
+import com.yrmz.chirp.api.mappers.toAuthenticatedUserDto
 import com.yrmz.chirp.api.mappers.toUserDto
 import com.yrmz.chirp.service.auth.AuthService
 import jakarta.validation.Valid
@@ -25,5 +28,15 @@ class AuthController(
             username = body.username,
             password = body.password
         ).toUserDto()
+    }
+
+    @PostMapping("/login")
+    fun login(
+        @RequestBody body: LoginRequest
+    ): AuthenticatedUserDto {
+        return authService.login(
+            email = body.email,
+            password = body.password
+        ).toAuthenticatedUserDto()
     }
 }

@@ -1,7 +1,9 @@
 package com.yrmz.chirp.api.exception_handling
 
+import com.yrmz.chirp.domain.exception.InvalidCredentialsException
 import com.yrmz.chirp.domain.exception.InvalidTokenException
 import com.yrmz.chirp.domain.exception.UserAlreadyExistsException
+import com.yrmz.chirp.domain.exception.UserNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -17,6 +19,22 @@ class AuthExceptionHandler {
     fun onUserAlreadyExits(e: UserAlreadyExistsException) =
         mapOf(
             "code" to "USER_EXISTS",
+            "message" to e.message
+        )
+
+    @ExceptionHandler(UserNotFoundException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun onUserNotFound(e: UserNotFoundException) =
+        mapOf(
+            "code" to "USER_NOT_FOUND",
+            "message" to e.message
+        )
+
+    @ExceptionHandler(InvalidCredentialsException::class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    fun onInvalidCredentials(e: InvalidCredentialsException) =
+        mapOf(
+            "code" to "INVALID_CREDENTIALS",
             "message" to e.message
         )
 
