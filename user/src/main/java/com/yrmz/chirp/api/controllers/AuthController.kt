@@ -9,16 +9,20 @@ import com.yrmz.chirp.api.mappers.toAuthenticatedUserDto
 import com.yrmz.chirp.api.mappers.toUserDto
 import com.yrmz.chirp.domain.model.AuthenticatedUser
 import com.yrmz.chirp.service.auth.AuthService
+import com.yrmz.chirp.service.auth.EmailVerificationService
 import jakarta.validation.Valid
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/auth")
 class AuthController(
-    private val authService: AuthService
+    private val authService: AuthService,
+    private val emailVerificationService: EmailVerificationService
 ) {
 
     @PostMapping("/register")
@@ -49,5 +53,12 @@ class AuthController(
         return authService
             .refresh(body.refreshToken)
             .toAuthenticatedUserDto()
+    }
+
+    @GetMapping("/verify")
+    fun verifyEmail(
+        @RequestParam token: String
+    ) {
+        emailVerificationService.verifyEmail(token)
     }
 }

@@ -1,5 +1,6 @@
 package com.yrmz.chirp.service.auth
 
+import com.yrmz.chirp.domain.exception.EmailNotVerifiedException
 import com.yrmz.chirp.domain.exception.InvalidCredentialsException
 import com.yrmz.chirp.domain.exception.InvalidTokenException
 import com.yrmz.chirp.domain.exception.UserAlreadyExistsException
@@ -25,12 +26,15 @@ class AuthService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
     private val jwtService: JwtService,
-    private val refreshTokenRepository: RefreshTokenRepository
+    private val refreshTokenRepository: RefreshTokenRepository,
+    private val emailVerificationService: EmailVerificationService
 ) {
 
+    @Transactional
     fun register(email: String, username: String, password: String): User {
+        val trimmedEmail = email.trim()
         val user = userRepository.findByEmailOrUsername(
-            email = email.trim(),
+            email = trimmedEmail,
             username = username.trim(),
         )
 
@@ -38,13 +42,15 @@ class AuthService(
             throw UserAlreadyExistsException()
         }
 
-        val savedUser = userRepository.save(
+        val savedUser = userRepository.saveAndFlush(
             UserEntity(
                 email = email.trim(),
                 username = username.trim(),
                 hashedPassword = passwordEncoder.encode(password)
             )
         ).toUser()
+
+        val token = emailVerificationService.createVerificationToken(trimmedEmail)
 
         return savedUser
     }
@@ -60,7 +66,9 @@ class AuthService(
             throw InvalidCredentialsException()
         }
 
-        // if(!user.hasVerifiedEmail)
+        if(!user.hasVerifiedEmail) {
+            throw EmailNotVerifiedException()
+        }
 
         return user.id?.let { userId ->
             val accessToken = jwtService.generateAccessToken(userId)

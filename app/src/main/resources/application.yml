@@ -34,3 +34,8 @@ jpa:
 
 jwt:
   secret: ${JWT_SECRET_BASE64}
+
+chirp:
+  email:
+    verification:
+      expiry-hours: 24
