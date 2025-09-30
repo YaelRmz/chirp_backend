@@ -1,4 +1,4 @@
-package com.yrmz.chirp.service.auth
+package com.yrmz.chirp.service
 
 import com.yrmz.chirp.domain.exception.InvalidTokenException
 import com.yrmz.chirp.domain.exception.UserNotFoundException
@@ -27,20 +27,10 @@ class EmailVerificationService(
         val userEntity = userRepository.findByEmail(email)
             ?: throw UserNotFoundException()
 
-        val existingTokens = emailVerificationTokenRepository.findByUserAndUsedAtIsNull(
-            user = userEntity
-        )
-
-        val now = Instant.now()
-        val usedTokens = existingTokens.map {
-            it.apply {
-                this.usedAt = now
-            }
-        }
-        emailVerificationTokenRepository.saveAll(usedTokens)
+        emailVerificationTokenRepository.invalidateActiveTokenForUser(userEntity)
 
         val token = EmailVerificationTokenEntity(
-            expiresAt = now.plus(expiryHours, ChronoUnit.HOURS),
+            expiresAt = Instant.now().plus(expiryHours, ChronoUnit.HOURS),
             user = userEntity,
         )
 

@@ -1,15 +1,18 @@
 package com.yrmz.chirp.api.controllers
 
 import com.yrmz.chirp.api.dto.AuthenticatedUserDto
+import com.yrmz.chirp.api.dto.ChangePasswordRequest
+import com.yrmz.chirp.api.dto.EmailRequest
 import com.yrmz.chirp.api.dto.LoginRequest
 import com.yrmz.chirp.api.dto.RefreshRequest
 import com.yrmz.chirp.api.dto.RegisterRequest
+import com.yrmz.chirp.api.dto.ResetPasswordRequest
 import com.yrmz.chirp.api.dto.UserDto
 import com.yrmz.chirp.api.mappers.toAuthenticatedUserDto
 import com.yrmz.chirp.api.mappers.toUserDto
-import com.yrmz.chirp.domain.model.AuthenticatedUser
-import com.yrmz.chirp.service.auth.AuthService
-import com.yrmz.chirp.service.auth.EmailVerificationService
+import com.yrmz.chirp.service.AuthService
+import com.yrmz.chirp.service.EmailVerificationService
+import com.yrmz.chirp.service.PasswordResetService
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -22,7 +25,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/auth")
 class AuthController(
     private val authService: AuthService,
-    private val emailVerificationService: EmailVerificationService
+    private val emailVerificationService: EmailVerificationService,
+    private val passwordResetService: PasswordResetService,
 ) {
 
     @PostMapping("/register")
@@ -60,5 +64,29 @@ class AuthController(
         @RequestParam token: String
     ) {
         emailVerificationService.verifyEmail(token)
+    }
+
+    @PostMapping("/forgot-password")
+    fun forgotPassword(
+        @Valid @RequestBody body: EmailRequest
+    ) {
+        passwordResetService.requestPasswordReset(body.email)
+    }
+
+    @PostMapping("/reset-password")
+    fun resetPassword(
+        @Valid @RequestBody body: ResetPasswordRequest
+    ) {
+        passwordResetService.resetPassword(
+            token = body.token,
+            newPassword = body.newPassword
+        )
+    }
+
+    @PostMapping("/change-password")
+    fun changePassword(
+        @Valid @RequestBody body: ChangePasswordRequest
+    ) {
+        // Extract request user ID
     }
 }

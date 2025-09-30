@@ -1,4 +1,4 @@
-package com.yrmz.chirp.service.auth
+package com.yrmz.chirp.service
 
 import com.yrmz.chirp.domain.exception.EmailNotVerifiedException
 import com.yrmz.chirp.domain.exception.InvalidCredentialsException
