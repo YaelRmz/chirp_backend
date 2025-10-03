@@ -3,7 +3,9 @@ package com.yrmz.chirp.api.exception_handling
 import com.yrmz.chirp.domain.exception.EmailNotVerifiedException
 import com.yrmz.chirp.domain.exception.InvalidCredentialsException
 import com.yrmz.chirp.domain.exception.InvalidTokenException
+import com.yrmz.chirp.domain.exception.RateLimitException
 import com.yrmz.chirp.domain.exception.SamePasswordException
+import com.yrmz.chirp.domain.exception.UnauthorizedException
 import com.yrmz.chirp.domain.exception.UserAlreadyExistsException
 import com.yrmz.chirp.domain.exception.UserNotFoundException
 import org.springframework.http.HttpStatus
@@ -47,12 +49,27 @@ class AuthExceptionHandler {
             "code" to "EMAIL_NOT_VERIFIED",
             "message" to e.message
         )
+    @ExceptionHandler(UnauthorizedException::class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    fun onUnauthorized(e: UnauthorizedException) =
+        mapOf(
+            "code" to "UNAUTHORIZED",
+            "message" to e.message
+        )
 
     @ExceptionHandler(SamePasswordException::class)
     @ResponseStatus(HttpStatus.CONFLICT)
     fun onSamePasswordException(e: SamePasswordException) =
         mapOf(
             "code" to "SAME_PASSWORD",
+            "message" to e.message
+        )
+
+    @ExceptionHandler(RateLimitException::class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    fun onRateLimitException(e: RateLimitException) =
+        mapOf(
+            "code" to "RATE_LIMIT_EXCEEDED",
             "message" to e.message
         )
 

@@ -3,5 +3,13 @@ spring:
     hibernate:
       ddl-auto: validate
 
-  jwt:
-    expiration-minutes: 15
+jwt:
+  expiration-minutes: 15
+
+nginx:
+  require-proxy: true
+
+chirp:
+  rate-limit:
+    ip:
+      applyLimit: true
