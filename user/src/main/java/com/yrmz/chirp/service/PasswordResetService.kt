@@ -4,7 +4,7 @@ import com.yrmz.chirp.domain.exception.InvalidCredentialsException
 import com.yrmz.chirp.domain.exception.InvalidTokenException
 import com.yrmz.chirp.domain.exception.SamePasswordException
 import com.yrmz.chirp.domain.exception.UserNotFoundException
-import com.yrmz.chirp.domain.model.UserId
+import com.yrmz.chirp.domain.type.UserId
 import com.yrmz.chirp.infra.database.entities.PasswordResetTokenEntity
 import com.yrmz.chirp.infra.database.repositories.PasswordResetTokenRepository
 import com.yrmz.chirp.infra.database.repositories.RefreshTokenRepository

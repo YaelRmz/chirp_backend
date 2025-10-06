@@ -1,7 +1,7 @@
 package com.yrmz.chirp.service
 
 import com.yrmz.chirp.domain.exception.InvalidTokenException
-import com.yrmz.chirp.domain.model.UserId
+import com.yrmz.chirp.domain.type.UserId
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys

@@ -1,6 +1,6 @@
 package com.yrmz.chirp.api.dto
 
-import com.yrmz.chirp.domain.model.UserId
+import com.yrmz.chirp.domain.type.UserId
 
 data class UserDto(
     val id: UserId,

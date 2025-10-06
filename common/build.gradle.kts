@@ -16,6 +16,10 @@ dependencies {
     api(libs.kotlin.reflect)
     api(libs.jackson.module.kotlin)
 
+    implementation(libs.spring.boot.starter.amqp)
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.+")
+
+
     testImplementation(kotlin("test"))
 }
 

@@ -1,5 +1,6 @@
 package com.yrmz.chirp.service
 
+import com.yrmz.chirp.domain.events.user.UserEvent
 import com.yrmz.chirp.domain.exception.EmailNotVerifiedException
 import com.yrmz.chirp.domain.exception.InvalidCredentialsException
 import com.yrmz.chirp.domain.exception.InvalidTokenException
@@ -7,12 +8,13 @@ import com.yrmz.chirp.domain.exception.UserAlreadyExistsException
 import com.yrmz.chirp.domain.exception.UserNotFoundException
 import com.yrmz.chirp.domain.model.AuthenticatedUser
 import com.yrmz.chirp.domain.model.User
-import com.yrmz.chirp.domain.model.UserId
+import com.yrmz.chirp.domain.type.UserId
 import com.yrmz.chirp.infra.database.entities.RefreshTokenEntity
 import com.yrmz.chirp.infra.database.entities.UserEntity
 import com.yrmz.chirp.infra.database.mappers.toUser
 import com.yrmz.chirp.infra.database.repositories.RefreshTokenRepository
 import com.yrmz.chirp.infra.database.repositories.UserRepository
+import com.yrmz.chirp.infra.message_queue.EventPublisher
 import com.yrmz.chirp.infra.security.PasswordEncoder
 import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
@@ -27,7 +29,8 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder,
     private val jwtService: JwtService,
     private val refreshTokenRepository: RefreshTokenRepository,
-    private val emailVerificationService: EmailVerificationService
+    private val emailVerificationService: EmailVerificationService,
+    private val eventPublisher: EventPublisher
 ) {
 
     @Transactional
@@ -51,6 +54,15 @@ class AuthService(
         ).toUser()
 
         val token = emailVerificationService.createVerificationToken(trimmedEmail)
+
+        eventPublisher.publish(
+            event = UserEvent.Created(
+                userId = savedUser.id,
+                email = savedUser.email,
+                username = savedUser.username,
+                verificationToken = token.token,
+            )
+        )
 
         return savedUser
     }

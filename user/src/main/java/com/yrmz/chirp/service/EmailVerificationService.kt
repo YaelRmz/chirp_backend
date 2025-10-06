@@ -1,5 +1,6 @@
 package com.yrmz.chirp.service
 
+import com.yrmz.chirp.domain.events.user.UserEvent
 import com.yrmz.chirp.domain.exception.InvalidTokenException
 import com.yrmz.chirp.domain.exception.UserNotFoundException
 import com.yrmz.chirp.domain.model.EmailVerificationToken
@@ -8,6 +9,7 @@ import com.yrmz.chirp.infra.database.mappers.toEmailVerificationToken
 import com.yrmz.chirp.infra.database.mappers.toUser
 import com.yrmz.chirp.infra.database.repositories.EmailVerificationTokenRepository
 import com.yrmz.chirp.infra.database.repositories.UserRepository
+import com.yrmz.chirp.infra.message_queue.EventPublisher
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
@@ -19,11 +21,26 @@ import java.time.temporal.ChronoUnit
 class EmailVerificationService(
     private val emailVerificationTokenRepository: EmailVerificationTokenRepository,
     private val userRepository: UserRepository,
+    private val eventPublisher: EventPublisher,
     @param:Value("\${chirp.email.verification.expiry-hours}") private val expiryHours: Long
 ) {
 
+    @Transactional
     fun resendVerificationEmail(email: String) {
+        val token = createVerificationToken(email)
 
+        if (token.user.hasEmailVerified) {
+            return
+        }
+
+        eventPublisher.publish(
+            event = UserEvent.RequestResendVerification(
+                userId = token.user.id,
+                email = token.user.email,
+                username = token.user.username,
+                verificationToken = token.token
+            )
+        )
     }
 
     @Transactional
