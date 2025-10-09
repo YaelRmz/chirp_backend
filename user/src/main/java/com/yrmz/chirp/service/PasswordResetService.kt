@@ -1,5 +1,6 @@
 package com.yrmz.chirp.service
 
+import com.yrmz.chirp.domain.events.user.UserEvent
 import com.yrmz.chirp.domain.exception.InvalidCredentialsException
 import com.yrmz.chirp.domain.exception.InvalidTokenException
 import com.yrmz.chirp.domain.exception.SamePasswordException
@@ -9,6 +10,7 @@ import com.yrmz.chirp.infra.database.entities.PasswordResetTokenEntity
 import com.yrmz.chirp.infra.database.repositories.PasswordResetTokenRepository
 import com.yrmz.chirp.infra.database.repositories.RefreshTokenRepository
 import com.yrmz.chirp.infra.database.repositories.UserRepository
+import com.yrmz.chirp.infra.message_queue.EventPublisher
 import com.yrmz.chirp.infra.security.PasswordEncoder
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
@@ -24,6 +26,7 @@ class PasswordResetService(
     private val passwordResetTokenRepository: PasswordResetTokenRepository,
     private val refreshTokenRepository: RefreshTokenRepository,
     private val passwordEncoder: PasswordEncoder,
+    private val eventPublisher: EventPublisher,
     @param:Value("\${chirp.email.reset-password.expiry-minutes}") private val expiryMinutes: Long
 ) {
 
@@ -39,7 +42,15 @@ class PasswordResetService(
         )
         passwordResetTokenRepository.save(token)
 
-        // Notification
+        eventPublisher.publish(
+            event = UserEvent.RequestResetPassword(
+                userId = user.id!!,
+                email = user.email,
+                username = user.username,
+                passwordResetToken = token.token,
+                expiresInMinutes = expiryMinutes
+            )
+        )
     }
 
     @Transactional
