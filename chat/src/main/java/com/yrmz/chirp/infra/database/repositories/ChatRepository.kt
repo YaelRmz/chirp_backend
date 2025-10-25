@@ -17,21 +17,21 @@ interface ChatRepository: JpaRepository<ChatEntity, ChatId> {
         AND EXISTS (
             SELECT 1
             FROM c.participants p
-            WHERE p.userId =: userId
+            WHERE p.userId = :userId
         )
     """)
     fun findById(id: ChatId, userId: UserId): ChatEntity?
 
     @Query("""
-        SELECT c
+        SELECT DISTINCT c
         FROM ChatEntity c
         LEFT JOIN FETCH c.participants
         LEFT JOIN FETCH c.creator
-        WHERE EXIST (
+        WHERE EXISTS (
             SELECT 1
             FROM c.participants p
-            WHERE p.userId =: userId
+            WHERE p.userId = :userId
         )
     """)
-    fun finAllByUserId(userId: UserId): List<ChatEntity>
+    fun findAllByUserId(userId: UserId): List<ChatEntity>
 }

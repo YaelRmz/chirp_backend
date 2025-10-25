@@ -1,4 +1,4 @@
-package com.yrmz.chirp.domain.models.exception
+package com.yrmz.chirp.domain.exception
 
 import java.lang.RuntimeException
 

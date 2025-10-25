@@ -13,16 +13,22 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import java.time.Instant
 
 @Entity
 @Table(
     name = "chat_messages",
-    schema = "chat_services",
+    schema = "chat_service",
     indexes = [
-        Index(name = "idx_chat_message_chat_id_created_at", columnList = "chat_id,created_at DESC")
+        Index(
+            name = "idx_chat_message_chat_id_created_at",
+            columnList = "chat_id,created_at DESC"
+        )
     ]
 )
+
 class ChatMessageEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -31,13 +37,14 @@ class ChatMessageEntity(
     @Column(nullable = false)
     var content: String,
 
-    @JoinColumn(
+    @Column(
         name = "chat_id",
         nullable = false,
         updatable = false
     )
     var chatId: ChatId,
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
         name = "chat_id",
@@ -54,7 +61,7 @@ class ChatMessageEntity(
         insertable = false,
         updatable = false
     )
-    var sender: ChatParticipantEntity? = null,
+    var sender: ChatParticipantEntity,
 
     @CreationTimestamp
     var createdAt: Instant = Instant.now()

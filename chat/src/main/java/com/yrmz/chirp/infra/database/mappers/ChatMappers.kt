@@ -4,6 +4,7 @@ import com.yrmz.chirp.domain.models.Chat
 import com.yrmz.chirp.domain.models.ChatMessage
 import com.yrmz.chirp.domain.models.ChatParticipant
 import com.yrmz.chirp.infra.database.entities.ChatEntity
+import com.yrmz.chirp.infra.database.entities.ChatMessageEntity
 import com.yrmz.chirp.infra.database.entities.ChatParticipantEntity
 
 fun ChatEntity.toChat(lastMessage: ChatMessage? = null): Chat {
@@ -25,5 +26,24 @@ fun ChatParticipantEntity.toChatParticipant(): ChatParticipant {
         username = username,
         email = email,
         profilePictureUrl = profilePictureUrl
+    )
+}
+
+fun ChatParticipant.toChatParticipantEntity(): ChatParticipantEntity {
+    return ChatParticipantEntity(
+        userId = userId,
+        username = username,
+        email = email,
+        profilePictureUrl = profilePictureUrl
+    )
+}
+
+fun ChatMessageEntity.toChatMessage(): ChatMessage {
+    return ChatMessage(
+        id = id!!,
+        chatId = chatId,
+        sender = sender.toChatParticipant(),
+        content = content,
+        createdAt = createdAt
     )
 }
