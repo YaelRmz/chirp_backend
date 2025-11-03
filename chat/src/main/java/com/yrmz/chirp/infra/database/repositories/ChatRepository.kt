@@ -20,7 +20,7 @@ interface ChatRepository: JpaRepository<ChatEntity, ChatId> {
             WHERE p.userId = :userId
         )
     """)
-    fun findById(id: ChatId, userId: UserId): ChatEntity?
+    fun findChatById(id: ChatId, userId: UserId): ChatEntity?
 
     @Query("""
         SELECT DISTINCT c

@@ -20,6 +20,8 @@ dependencies {
 	implementation(libs.spring.boot.starter.data.redis)
 	implementation(libs.spring.boot.starter.data.jpa)
 	runtimeOnly(libs.postgresql)
+
+	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.+")
 }
 
 tasks.withType<Test> {

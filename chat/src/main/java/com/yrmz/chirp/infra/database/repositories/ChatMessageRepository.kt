@@ -19,7 +19,7 @@ interface ChatMessageRepository: JpaRepository<ChatMessageEntity, ChatMessageId>
         ORDER BY m.createdAt DESC
     """
     )
-    fun finByChatBefore(
+    fun findByChatIdBefore(
         chatId: ChatId,
         before: Instant,
         pageable: Pageable,
@@ -40,6 +40,6 @@ interface ChatMessageRepository: JpaRepository<ChatMessageEntity, ChatMessageId>
     """
     )
     fun findLatestMessagesByChatIds(
-        chatsId: Set<ChatId>
+        chatIds: Set<ChatId>
     ): List<ChatMessageEntity>
 }
