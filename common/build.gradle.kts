@@ -20,6 +20,9 @@ dependencies {
     implementation(libs.spring.boot.starter.security)
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.+")
 
+    implementation(libs.jwt.api)
+    runtimeOnly(libs.jwt.impl)
+    runtimeOnly(libs.jwt.jackson)
 
     testImplementation(kotlin("test"))
 }

@@ -58,8 +58,6 @@ class ChatMessageEntity(
     @JoinColumn(
         name = "sender_id",
         nullable = false,
-        insertable = false,
-        updatable = false
     )
     var sender: ChatParticipantEntity,
 

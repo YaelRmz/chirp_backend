@@ -18,3 +18,9 @@ chirp:
   rate-limit:
     ip:
       applyLimit: false
+  web-socket:
+    allowed-origin: "http://localhost:80808"
+
+logging:
+  level:
+    com.yrmz.chirp: DEBUG
