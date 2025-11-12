@@ -3,7 +3,9 @@ package com.yrmz.chirp.api.exception_handling
 import com.yrmz.chirp.domain.exception.ChatNotFoundException
 import com.yrmz.chirp.domain.exception.ChatParticipantNotFoundException
 import com.yrmz.chirp.domain.exception.InvalidChatSizeException
+import com.yrmz.chirp.domain.exception.InvalidProfilePictureException
 import com.yrmz.chirp.domain.exception.MessageNotFoundException
+import com.yrmz.chirp.domain.exception.StorageException
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -23,8 +25,22 @@ class ChatExceptionHandler {
 
     @ExceptionHandler(InvalidChatSizeException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    fun onInvalidChatSize(e: InvalidChatSizeException) = mapOf(
+    fun onForbidden(e: InvalidChatSizeException) = mapOf(
         "code" to "INVALID_CHAT_SIZE",
+        "message" to e.message
+    )
+
+    @ExceptionHandler(InvalidProfilePictureException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun onInvalidProfilePicture(e: InvalidProfilePictureException) = mapOf(
+        "code" to "INVALID_PROFILE_PICTURE",
+        "message" to e.message
+    )
+
+    @ExceptionHandler(StorageException::class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    fun onStorageException(e: StorageException) = mapOf(
+        "code" to "STORAGE_ERROR",
         "message" to e.message
     )
 }

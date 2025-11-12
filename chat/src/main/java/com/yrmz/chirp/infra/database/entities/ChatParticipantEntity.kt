@@ -29,7 +29,7 @@ class ChatParticipantEntity(
     val email: String,
 
     @Column(nullable = true)
-    val profilePictureUrl: String? = null,
+    var profilePictureUrl: String? = null,
 
     @CreationTimestamp
     val createdAt: Instant = Instant.now()
