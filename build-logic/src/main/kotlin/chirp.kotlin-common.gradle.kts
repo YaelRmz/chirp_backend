@@ -15,13 +15,13 @@ repositories {
 }
 
 configure<KotlinJvmProjectExtension> {
-    jvmToolchain(21)
+    jvmToolchain(17)
 }
 
 tasks.withType<KotlinCompile> {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
-        jvmTarget = JvmTarget.JVM_21
+        jvmTarget = JvmTarget.JVM_17
     }
 }
 

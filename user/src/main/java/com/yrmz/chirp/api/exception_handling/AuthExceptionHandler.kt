@@ -43,12 +43,13 @@ class AuthExceptionHandler {
         )
 
     @ExceptionHandler(EmailNotVerifiedException::class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     fun onEmailNotVerified(e: EmailNotVerifiedException) =
         mapOf(
             "code" to "EMAIL_NOT_VERIFIED",
             "message" to e.message
         )
+
     @ExceptionHandler(UnauthorizedException::class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     fun onUnauthorized(e: UnauthorizedException) =
@@ -88,9 +89,11 @@ class AuthExceptionHandler {
         }
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(mapOf(
-                "code" to "VALIDATION_ERROR",
-                "errors" to errors
-            ))
+            .body(
+                mapOf(
+                    "code" to "VALIDATION_ERROR",
+                    "errors" to errors
+                )
+            )
     }
 }

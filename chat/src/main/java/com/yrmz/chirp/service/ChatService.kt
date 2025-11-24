@@ -2,6 +2,7 @@ package com.yrmz.chirp.service
 
 import com.yrmz.chirp.api.dto.ChatMessageDto
 import com.yrmz.chirp.api.mappers.toChatMessageDto
+import com.yrmz.chirp.domain.event.ChatCreatedEvent
 import com.yrmz.chirp.domain.event.ChatParticipantsJoinedEvent
 import com.yrmz.chirp.domain.event.ChatParticipantsLeftEvent
 import com.yrmz.chirp.domain.exception.ChatNotFoundException
@@ -97,12 +98,19 @@ class ChatService(
             ?: throw ChatParticipantNotFoundException(creatorId)
 
 
-        return chatRepository.save(
+        return chatRepository.saveAndFlush(
             ChatEntity(
                 creator = creator,
                 participants = setOf(creator) + otherParticipants
             )
-        ).toChat(lastMessage = null)
+        ).toChat(lastMessage = null).also { entity ->
+            applicationEventPublisher.publishEvent(
+                ChatCreatedEvent(
+                    chatId = entity.id,
+                    participants = entity.participants.map { it.userId }
+                )
+            )
+        }
     }
 
     @Transactional
